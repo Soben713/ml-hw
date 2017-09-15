@@ -142,6 +142,45 @@ class Knearest:
             return 0.0
 
 
+def get_accuracy_per_training_points():
+    for limit in range(10, 500, 10):
+        knn = Knearest(data.train_x[:limit], data.train_y[:limit], args.k)
+        confusion = knn.confusion_matrix(data.test_x, data.test_y)
+        accuracy = knn.accuracy(confusion)
+        print (limit, "\t", accuracy)
+
+
+def get_accuracy_per_k():
+    limit = 500
+
+    for k in range(1, 30):
+        knn = Knearest(data.train_x[:limit], data.train_y[:limit], k)
+        confusion = knn.confusion_matrix(data.test_x, data.test_y)
+        accuracy = knn.accuracy(confusion)
+        print (k, "\t", accuracy)
+
+
+def get_accuracy_per_k_large():
+    limit = 500
+
+    for k in range(1, 500, 5):
+        knn = Knearest(data.train_x[:limit], data.train_y[:limit], k)
+        confusion = knn.confusion_matrix(data.test_x, data.test_y)
+        accuracy = knn.accuracy(confusion)
+        print (k, "\t", accuracy)
+
+
+def get_confusion():
+    knn = Knearest(data.train_x[:500], data.train_y[:500], 3)
+
+    confusion = knn.confusion_matrix(data.test_x, data.test_y)
+    print("\t" + "\t".join(str(x) for x in range(10)))
+    print("".join(["-"] * 90))
+    for ii in range(10):
+        print("\t".join(str(confusion[ii].get(x, 0))
+                                       for x in range(10)))
+    print("Accuracy: %f" % knn.accuracy(confusion))
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='KNN classifier options')
     parser.add_argument('--k', type=int, default=3,
@@ -154,18 +193,6 @@ if __name__ == "__main__":
 
     # You should not have to modify any of this code
 
-    if args.limit > 0:
-        print("Data limit: %i" % args.limit)
-        knn = Knearest(data.train_x[:args.limit], data.train_y[:args.limit],
-                       args.k)
-    else:
-        knn = Knearest(data.train_x, data.train_y, args.k)
-    print("Done loading data")
-
-    confusion = knn.confusion_matrix(data.test_x, data.test_y)
-    print("\t" + "\t".join(str(x) for x in range(10)))
-    print("".join(["-"] * 90))
-    for ii in range(10):
-        print("%i:\t" % ii + "\t".join(str(confusion[ii].get(x, 0))
-                                       for x in range(10)))
-    print("Accuracy: %f" % knn.accuracy(confusion))
+    # get_accuracy_per_training_points()
+    # get_accuracy_per_k_large()
+    get_confusion()
