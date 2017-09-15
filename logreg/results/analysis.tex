@@ -1,0 +1,31 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks,citecolor=blue]{hyperref}
+
+\newcommand{\eq}[1]{\hyperref[eq:#1]{(\ref*{eq:#1})}}
+
+\author{Soheil Behnezhad}
+\title{CMSC726: Assignment \#2 --- Logistic Regression}
+
+\begin{document}
+
+\maketitle
+
+\begin{enumerate}
+\item
+\item
+\item Words with higher (resp. lower) biases are the better predicators for class 1 (resp. 0). Therefore by sorting the words based on their bias we can determine the best predicators for the classes.
+
+The first 5 words with the lowest bias are as follows:
+[(-1.8519, 'hockey'), (-1.2709, 'playoffs'), (-0.9959, 'pick'), (-0.9045, 'playoff'), (-0.9012, 'points')]
+
+The first 5 words with the highest bias are as follows:
+[(1.2073, 'hit'), (1.1462, 'runs'), (0.9299, 'bat'), (0.9003, 'saves'), (0.8407, 'pitching')]
+\item Based on the logistic regression's formula, if the bias of a feature is zero, then it has no effect on the classification. 
+\end{enumerate}
+
+\end{document}

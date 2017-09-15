@@ -1,10 +1,9 @@
+import argparse
 import random
+from math import exp, log
+
 import numpy
 from numpy import zeros, sign
-from math import exp, log
-from collections import defaultdict
-
-import argparse
 
 kSEED = 1701
 kBIAS = "BIAS_CONSTANT"
@@ -105,22 +104,20 @@ class LogReg:
         :return: Return the new value of the regression coefficients
         """
 
-        elif self.mu > 0:
+        # elif self.mu > 0:
 
+        beta_t_x = sum(self.beta[i] * train_example.x[i] for i in range(self.dimension))
 
+        # print("beta_t_x %s" % beta_t_x)
 
+        pi_i = sigmoid(beta_t_x)
 
+        lam = self.step(iteration)
 
+        for i in range(self.dimension):
+            self.beta[i] = self.beta[i] * (1 - 2*lam*self.mu) + lam*(train_example.y - pi_i)*train_example.x[i]
 
-        # if debug:
-        #     print("X")
-        #     print(train_example.x)
-
-        #     print("Delta")
-        #     print(delta)
-
-        #     print("Beta")
-        #     print(self.beta)
+        # print("beta: %s" % self.beta)
 
         return self.beta
 
@@ -216,3 +213,14 @@ if __name__ == "__main__":
     lr.finalize_lazy(update_number)
     print("Update %i\tTP %f\tHP %f\tTA %f\tHA %f" %
           (update_number, train_lp, ho_lp, train_acc, ho_acc))
+
+
+    print(vocab)
+
+    words_bias = [(lr.beta[i], vocab[i]) for i in range(len(vocab))]
+
+    print(sorted(words_bias))
+
+    print(sorted(words_bias, reverse=True))
+
+    print(sorted(words_bias, key=lambda x: abs(x[0])))
