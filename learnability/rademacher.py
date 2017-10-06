@@ -1,11 +1,5 @@
-from random import randint, seed
-from collections import defaultdict
-from math import atan, sin, cos, pi
-
 from numpy import array
-from numpy.linalg import norm
-
-from bst import BST
+from random import randint, seed
 
 kSIMPLE_DATA = [(1., 1.), (2., 2.), (3., 0.), (4., 2.)]
 
@@ -56,7 +50,7 @@ class PlaneHypothesis(Classifier):
 
     def __str__(self):
         return "x: x_0 * %0.2f + x_1 * %0.2f >= %f" % \
-            (self._vector[0], self._vector[1], self._bias)
+               (self._vector[0], self._vector[1], self._bias)
 
 
 class OriginPlaneHypothesis(PlaneHypothesis):
@@ -64,6 +58,7 @@ class OriginPlaneHypothesis(PlaneHypothesis):
     A class that represents a decision boundary that must pass through the
     origin.
     """
+
     def __init__(self, x, y):
         """
         Create a decision boundary by specifying the normal vector to the
@@ -82,6 +77,7 @@ class AxisAlignedRectangle(Classifier):
     (inclusive of the boundary) is positive and everything else is negative.
 
     """
+
     def __init__(self, start_x, start_y, end_x, end_y):
         """
 
@@ -95,9 +91,9 @@ class AxisAlignedRectangle(Classifier):
           end_y: Top position
         """
         assert end_x >= start_x, "Cannot have negative length (%f vs. %f)" % \
-            (end_x, start_x)
+                                 (end_x, start_x)
         assert end_y >= start_y, "Cannot have negative height (%f vs. %f)" % \
-            (end_y, start_y)
+                                 (end_y, start_y)
 
         self._x1 = start_x
         self._y1 = start_y
@@ -112,11 +108,18 @@ class AxisAlignedRectangle(Classifier):
           point: The point to classify
         """
         return (point[0] >= self._x1 and point[0] <= self._x2) and \
-            (point[1] >= self._y1 and point[1] <= self._y2)
+               (point[1] >= self._y1 and point[1] <= self._y2)
 
     def __str__(self):
         return "(%0.2f, %0.2f) -> (%0.2f, %0.2f)" % \
-            (self._x1, self._y1, self._x2, self._y2)
+               (self._x1, self._y1, self._x2, self._y2)
+
+    def __eq__(self, other):
+        return self._x1 == other._x1 and self._x2 == other._x2 \
+               and self._y1 == other._y1 and self._y2 == other._y2
+
+    def __hash__(self):
+        return hash((self._x1, self._x2, self._y1, self._y2))
 
 
 class ConstantClassifier(Classifier):
@@ -157,6 +160,7 @@ def origin_plane_hypotheses(dataset):
 
     yield OriginPlaneHypothesis(1.0, 0.0)
 
+
 def plane_hypotheses(dataset):
     """
     Given a dataset in R2, return an iterator over hypotheses that result in
@@ -185,9 +189,39 @@ def axis_aligned_hypotheses(dataset):
     Args:
       dataset: The dataset to use to generate hypotheses
     """
+    # dataset_x_sorted = sorted(dataset, key=lambda point: point[0])
+    dataset_y_sorted = sorted(dataset, key=lambda point: point[1])
 
-    # TODO: complete this function
-    yield AxisAlignedRectangle(0, 0, 0, 0)
+    x_sorted = sorted([point[0] for point in dataset])
+    y_sorted = sorted([point[1] for point in dataset])
+
+    rectangles = set()
+
+    # first generate one that does not include any point
+    rectangles.add(AxisAlignedRectangle(x_sorted[0] - 1, x_sorted[0] - 1, y_sorted[0] - 1, y_sorted[0] - 1))
+
+    for bottom_point_ind in range(0, len(dataset_y_sorted)):
+        bottom_point = dataset_y_sorted[bottom_point_ind]
+
+        for top_point_ind in range(bottom_point_ind, len(dataset_y_sorted)):
+            top_point = dataset_y_sorted[top_point_ind]
+
+            for left_x_ind in range(0, len(x_sorted)):
+                left_x = x_sorted[left_x_ind]
+
+                if left_x > bottom_point[0] or left_x > top_point[0]:
+                    break
+
+                for right_x_ind in range(left_x_ind, len(x_sorted)):
+                    right_x = x_sorted[right_x_ind]
+
+                    if right_x < bottom_point[0] or right_x < top_point[0]:
+                        continue
+
+                    rectangles.add(AxisAlignedRectangle(left_x, bottom_point[1], right_x, top_point[1]))
+
+    for rect in list(rectangles):
+        yield rect
 
 
 def coin_tosses(number, random_seed=0):
@@ -227,8 +261,9 @@ def rademacher_estimate(dataset, hypothesis_generator, num_samples=500,
         else:
             rademacher = coin_tosses(len(dataset))
 
-        # TODO: complete this function
+            # TODO: complete this function
     return 0.0
+
 
 if __name__ == "__main__":
     print("Rademacher correlation of constant classifier %f" %

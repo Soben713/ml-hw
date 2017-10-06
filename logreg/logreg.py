@@ -215,12 +215,12 @@ if __name__ == "__main__":
           (update_number, train_lp, ho_lp, train_acc, ho_acc))
 
 
-    print(vocab)
-
-    words_bias = [(lr.beta[i], vocab[i]) for i in range(len(vocab))]
-
-    print(sorted(words_bias))
-
-    print(sorted(words_bias, reverse=True))
-
-    print(sorted(words_bias, key=lambda x: abs(x[0])))
+    # print(vocab)
+    #
+    # words_bias = [(lr.beta[i], vocab[i]) for i in range(len(vocab))]
+    #
+    # print(sorted(words_bias))
+    #
+    # print(sorted(words_bias, reverse=True))
+    #
+    # print(sorted(words_bias, key=lambda x: abs(x[0])))
